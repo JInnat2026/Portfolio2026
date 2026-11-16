@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATELIER — Contemporary Artist Network & Open Calls</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Editorial Serif (Cormorant Garamond / Instrument Serif) & Clean Sans (Inter / Space Mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&family=Space+Mono:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+                        sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['"Space Mono"', 'monospace'],
+                    },
+                    colors: {
+                        canvas: '#FAF9F6',
+                        paper: '#F3F1EC',
+                        ink: '#181816',
+                        muted: '#6E6D68',
+                        hairline: '#E2E0D8',
+                        terracotta: '#C85A32',
+                        sage: '#4A6B5D',
+                        cobalt: '#2B4C7E'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-canvas text-ink font-sans antialiased selection:bg-ink selection:text-canvas overflow-x-hidden">
+
+    <!-- Toast Notification Banner (Replaces alert) -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Top Editorial Navigation Bar -->
+    <header class="sticky top-0 z-30 bg-canvas/90 backdrop-blur-md border-b border-hairline">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 gap-4">
+                <!-- Brand Identity -->
+                <div class="flex items-center justify-between">
+                    <a href="#" onclick="switchView('directory'); return false;" class="flex items-baseline gap-3 group">
+                        <span class="font-serif text-3xl sm:text-4xl font-medium tracking-tight text-ink">ATELIER</span>
+                        <span class="font-mono text-[11px] uppercase tracking-widest text-muted border border-hairline px-2 py-0.5 rounded-full bg-paper">Index 04</span>
+                    </a>
+                    <!-- Mobile Quick Action -->
+                    <button onclick="openProfileModal()" class="sm:hidden bg-ink text-canvas text-xs font-medium px-3.5 py-2 rounded-full hover:bg-neutral-800 transition">
+                        + Join Index
+                    </button>
+                </div>
+
+                <!-- Primary View Switcher -->
+                <nav class="flex items-center gap-1 bg-paper p-1 rounded-full border border-hairline self-start sm:self-auto" aria-label="Primary Views">
+                    <button id="nav-directory" onclick="switchView('directory')" class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all bg-ink text-canvas shadow-sm">
+                        Artist Directory <span id="artist-count-badge" class="ml-1 font-mono text-[11px] opacity-80">(8)</span>
+                    </button>
+                    <button id="nav-calls" onclick="switchView('calls')" class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium text-muted hover:text-ink transition-all">
+                        Open Calls & Collabs <span id="calls-count-badge" class="ml-1 font-mono text-[11px] opacity-80">(5)</span>
+                    </button>
+                </nav>
+
+                <!-- Desktop CTA Actions -->
+                <div class="hidden sm:flex items-center gap-3">
+                    <button onclick="openMessagesInbox()" class="relative p-2.5 rounded-full border border-hairline bg-white hover:bg-paper transition text-ink" title="Studio Inbox">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+                        </svg>
+                        <span id="unread-dot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-terracotta"></span>
+                    </button>
+                    <button onclick="openProfileModal()" class="bg-ink text-canvas text-xs sm:text-sm font-medium px-4 py-2.5 rounded-full hover:bg-neutral-800 transition flex items-center gap-2 shadow-sm">
+                        <span>+ Share Artist Profile</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Editorial Hero / Curatorial Statement -->
+    <section class="border-b border-hairline bg-paper/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
+                <div class="lg:col-span-8">
+                    <p class="font-mono text-xs uppercase tracking-widest text-terracotta mb-2">Peer-to-Peer Studio Exchange — Autumn/Winter</p>
+                    <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal leading-[1.08] tracking-tight text-ink">
+                        A living registry for <span class="italic font-normal">cross-disciplinary</span> dialogue, studio critiques & joint commissions.
+                    </h1>
+                </div>
+                <div class="lg:col-span-4 flex flex-col justify-between lg:pl-6 lg:border-l border-hairline">
+                    <p class="text-sm text-muted leading-relaxed mb-4">
+                        Connect directly with sculptural fabricators, generative coders, spatial sound designers, and printmakers across Berlin, Tokyo, London, and beyond.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-4 text-xs font-mono text-ink">
+                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-sage"></span> Open for Collab</span>
+                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cobalt"></span> Studio Critique</span>
+                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-terracotta"></span> Residency Swap</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+
+        <!-- ========================================================= -->
+        <!-- VIEW 1: FILTERABLE ARTIST DIRECTORY                       -->
+        <!-- ========================================================= -->
+        <div id="view-directory" class="space-y-8">
+            
+            <!-- Filter & Search Control Bar -->
+            <div class="bg-white border border-hairline rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+                <div class="flex flex-col md:flex-row gap-4 justify-between">
+                    <!-- Search Input -->
+                    <div class="relative flex-1">
+                        <svg class="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+                        </svg>
+                        <input id="search-input" type="text" oninput="filterArtists()" placeholder="Search by artist name, medium (e.g., ceramic, TouchDesigner, 16mm), or city..." class="w-full pl-10 pr-4 py-2.5 bg-canvas border border-hairline rounded-xl text-sm text-ink placeholder:text-muted focus:outline-none focus:border-ink transition">
+                    </div>
+
+                    <!-- Availability Filter Dropdown -->
+                    <div class="flex flex-wrap sm:flex-nowrap gap-3">
+                        <select id="availability-filter" onchange="filterArtists()" class="w-full sm:w-auto bg-canvas border border-hairline rounded-xl px-3.5 py-2.5 text-sm text-ink focus:outline-none focus:border-ink cursor-pointer">
+                            <option value="all">All Availability Statuses</option>
+                            <option value="Open for Collaboration">Open for Collaboration</option>
+                            <option value="Seeking Studio Critique">Seeking Studio Critique</option>
+                            <option value="Open to Residency Swap">Open to Residency Swap</option>
+                            <option value="Commission Available">Commission Available</option>
+                        </select>
+
+                        <select id="location-filter" onchange="filterArtists()" class="w-full sm:w-auto bg-canvas border border-hairline rounded-xl px-3.5 py-2.5 text-sm text-ink focus:outline-none focus:border-ink cursor-pointer">
+                            <option value="all">All Cities</option>
+                            <option value="Berlin">Berlin</option>
+                            <option value="Tokyo">Tokyo</option>
+                            <option value="London">London</option>
+                            <option value="Mexico City">Mexico City</option>
+                            <option value="New York">New York</option>
+                            <option value="Seoul">Seoul</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Discipline Pill Filters -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-1 border-t border-hairline/70" id="discipline-pills">
+                    <span class="font-mono text-[11px] uppercase tracking-wider text-muted mr-1 shrink-0">Discipline:</span>
+                    <button onclick="setDisciplineFilter('All')" data-disc="All" class="disc-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-ink text-canvas transition shrink-0">All Practices</button>
+                    <button onclick="setDisciplineFilter('Visual')" data-disc="Visual" class="disc-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-paper text-ink hover:bg-hairline/60 transition shrink-0">Visual & Painting</button>
+                    <button onclick="setDisciplineFilter('Digital')" data-disc="Digital" class="disc-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-paper text-ink hover:bg-hairline/60 transition shrink-0">Digital & Generative</button>
+                    <button onclick="setDisciplineFilter('Spatial')" data-disc="Spatial" class="disc-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-paper text-ink hover:bg-hairline/60 transition shrink-0">Spatial & Sculpture</button>
+                    <button onclick="setDisciplineFilter('Multimedia')" data-disc="Multimedia" class="disc-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-paper text-ink hover:bg-hairline/60 transition shrink-0">Multimedia & Sound</button>
+                </div>
+            </div>
+
+            <!-- Active Filter Status & Reset -->
+            <div class="flex items-center justify-between text-xs text-muted">
+                <p id="results-summary">Showing all 8 resident artists</p>
+                <button id="reset-filters-btn" onclick="resetFilters()" class="hidden text-terracotta hover:underline font-medium">Reset filters</button>
+            </div>
+
+            <!-- Artist Cards Grid -->
+            <div id="artists-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <!-- Cards dynamically rendered via JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-directory" class="hidden text-center py-16 bg-white border border-hairline rounded-2xl">
+                <p class="font-serif text-2xl text-ink mb-2">No practitioners match those criteria.</p>
+                <p class="text-sm text-muted mb-5">Try broadening your discipline or location filters, or add your own studio profile.</p>
+                <button onclick="resetFilters()" class="px-4 py-2 rounded-full border border-ink text-xs font-medium hover:bg-ink hover:text-canvas transition">Clear All Filters</button>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 2: OPEN CALLS & COLLABORATIONS BOARD                 -->
+        <!-- ========================================================= -->
+        <div id="view-calls" class="hidden space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-hairline rounded-2xl p-5 sm:p-6">
+                <div>
+                    <span class="font-mono text-[11px] uppercase tracking-widest text-terracotta">Bulletin & Project Proposals</span>
+                    <h2 class="font-serif text-3xl text-ink mt-1">Open Calls & Studio Collaborations</h2>
+                    <p class="text-sm text-muted mt-1">Propose a two-person exhibition, seek technical fabrication partners, or organize peer crits.</p>
+                </div>
+                <button onclick="openCallModal()" class="bg-terracotta text-white text-xs sm:text-sm font-medium px-5 py-3 rounded-full hover:opacity-90 transition shrink-0 self-start sm:self-auto shadow-xs">
+                    + Post Open Call
+                </button>
+            </div>
+
+            <!-- Call Category Filter Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                <button onclick="filterCalls('All')" data-call-cat="All" class="call-cat-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-ink text-canvas transition shrink-0">All Calls</button>
+                <button onclick="filterCalls('Co-Creation')" data-call-cat="Co-Creation" class="call-cat-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-paper text-ink hover:bg-hairline/60 transition shrink-0">Co-Creation</button>
+                <button onclick="filterCalls('Exhibition / Space')" data-call-cat="Exhibition / Space" class="call-cat-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-paper text-ink hover:bg-hairline/60 transition shrink-0">Exhibition / Space</button>
+                <button onclick="filterCalls('Technical Skill Swap')" data-call-cat="Technical Skill Swap" class="call-cat-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-paper text-ink hover:bg-hairline/60 transition shrink-0">Technical Skill Swap</button>
+                <button onclick="filterCalls('Critique Circle')" data-call-cat="Critique Circle" class="call-cat-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-paper text-ink hover:bg-hairline/60 transition shrink-0">Critique Circle</button>
+            </div>
+
+            <!-- Open Calls Feed -->
+            <div id="calls-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Editorial Footer -->
+    <footer class="border-t border-hairline bg-paper mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-muted">
+            <div>
+                <span class="font-serif text-lg text-ink font-medium mr-2">ATELIER</span>
+                <span>Independent Artist Index & Peer Exchange.</span>
+            </div>
+            <div class="font-mono text-[11px]">
+                No algorithms. Direct studio-to-studio correspondence.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 1: CREATE / SHARE ARTIST PROFILE                                -->
+    <!-- ===================================================================== -->
+    <div id="profile-modal" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-ink/50 backdrop-blur-xs overflow-y-auto">
+        <div class="bg-canvas border border-hairline rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl my-8 relative">
+            <div class="flex items-start justify-between border-b border-hairline pb-4 mb-6">
+                <div>
+                    <span class="font-mono text-[11px] uppercase tracking-widest text-terracotta">Directory Submission</span>
+                    <h3 class="font-serif text-3xl text-ink mt-0.5">Share Your Artist Profile</h3>
+                </div>
+                <button onclick="closeProfileModal()" class="p-2 rounded-full hover:bg-paper text-muted hover:text-ink transition" aria-label="Close modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <form id="create-profile-form" onsubmit="handleCreateProfile(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-ink mb-1">Full Name / Studio Moniker *</label>
+                        <input required type="text" id="prof-name" placeholder="e.g., Clara Lindqvist" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-ink mb-1">Current City & Country *</label>
+                        <input required type="text" id="prof-location" placeholder="e.g., Berlin, Germany" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-ink mb-1">Primary Discipline *</label>
+                        <select id="prof-discipline" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                            <option value="Visual">Visual & Painting</option>
+                            <option value="Digital">Digital & Generative</option>
+                            <option value="Spatial">Spatial & Sculpture</option>
+                            <option value="Multimedia">Multimedia & Sound</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-ink mb-1">Current Availability *</label>
+                        <select id="prof-availability" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                            <option value="Open for Collaboration">Open for Collaboration</option>
+                            <option value="Seeking Studio Critique">Seeking Studio Critique</option>
+                            <option value="Open to Residency Swap">Open to Residency Swap</option>
+                            <option value="Commission Available">Commission Available</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-ink mb-1">Mediums & Practice Tags (comma separated) *</label>
+                    <input required type="text" id="prof-tags" placeholder="e.g., Raw Stoneware, Lime Plaster, Architectural Scale" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-ink mb-1">Artist Statement / Current Studio Focus *</label>
+                    <textarea required id="prof-bio" rows="3" placeholder="Describe your current material inquiries and what kind of peers you hope to meet..." class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-ink mb-1">Featured Work Title *</label>
+                        <input required type="text" id="prof-work-title" placeholder="e.g., Sediment Study No. 4 (2026)" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-ink mb-1">Portfolio Visual Motif</label>
+                        <select id="prof-motif" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                            <option value="monolith">Sculptural Monolith & Shadow</option>
+                            <option value="algorithmic">Generative Grid & Moiré</option>
+                            <option value="pigment">Earth Pigment & Organic Form</option>
+                            <option value="acoustic">Acoustic Waveform & Light</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-hairline flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeProfileModal()" class="px-4 py-2.5 rounded-full text-xs font-medium text-muted hover:text-ink transition">Cancel</button>
+                    <button type="submit" class="bg-ink text-canvas px-6 py-2.5 rounded-full text-xs font-medium hover:bg-neutral-800 transition">Publish to Index</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 2: POST NEW OPEN CALL / COLLABORATION                           -->
+    <!-- ===================================================================== -->
+    <div id="call-modal" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-ink/50 backdrop-blur-xs overflow-y-auto">
+        <div class="bg-canvas border border-hairline rounded-2xl max-w-xl w-full p-6 sm:p-8 shadow-2xl my-8 relative">
+            <div class="flex items-start justify-between border-b border-hairline pb-4 mb-6">
+                <div>
+                    <span class="font-mono text-[11px] uppercase tracking-widest text-terracotta">Bulletin Board</span>
+                    <h3 class="font-serif text-3xl text-ink mt-0.5">Post an Open Call</h3>
+                </div>
+                <button onclick="closeCallModal()" class="p-2 rounded-full hover:bg-paper text-muted hover:text-ink transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <form id="create-call-form" onsubmit="handleCreateCall(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-ink mb-1">Project / Proposal Title *</label>
+                    <input required type="text" id="call-title" placeholder="e.g., Seeking Spatial Sound Artist for Berlin Bunker Installation" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-ink mb-1">Your Name / Studio *</label>
+                        <input required type="text" id="call-author" placeholder="e.g., Lukas Weber" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-ink mb-1">Collaboration Type *</label>
+                        <select id="call-category" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                            <option value="Co-Creation">Co-Creation</option>
+                            <option value="Exhibition / Space">Exhibition / Space</option>
+                            <option value="Technical Skill Swap">Technical Skill Swap</option>
+                            <option value="Critique Circle">Critique Circle</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-ink mb-1">Location / Format *</label>
+                        <input required type="text" id="call-location" placeholder="e.g., Berlin / Remote Hybrid" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-ink mb-1">Target Timeline *</label>
+                        <input required type="text" id="call-timeline" placeholder="e.g., Jan – March 2027" class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-ink mb-1">Proposal Details & What You Bring *</label>
+                    <textarea required id="call-desc" rows="3" placeholder="Outline the concept, space, funding status, or specific skills you are looking to exchange..." class="w-full px-3.5 py-2.5 bg-white border border-hairline rounded-xl text-sm focus:outline-none focus:border-ink"></textarea>
+                </div>
+
+                <div class="pt-4 border-t border-hairline flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeCallModal()" class="px-4 py-2.5 rounded-full text-xs font-medium text-muted hover:text-ink transition">Cancel</button>
+                    <button type="submit" class="bg-terracotta text-white px-6 py-2.5 rounded-full text-xs font-medium hover:opacity-90 transition">Publish Open Call</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 3: PORTFOLIO PREVIEW LIGHTBOX                                   -->
+    <!-- ===================================================================== -->
+    <div id="portfolio-modal" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-ink/70 backdrop-blur-xs overflow-y-auto">
+        <div class="bg-canvas border border-hairline rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl my-8">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-hairline bg-white">
+                <div>
+                    <span id="port-artist-disc" class="font-mono text-[11px] uppercase tracking-widest text-terracotta">Spatial & Sculpture</span>
+                    <h3 id="port-artist-name" class="font-serif text-2xl text-ink">Artist Name</h3>
+                </div>
+                <button onclick="closePortfolioModal()" class="p-2 rounded-full hover:bg-paper text-muted hover:text-ink transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 sm:p-8 space-y-6">
+                <!-- Artwork Frame -->
+                <div id="port-artwork-container" class="w-full h-64 sm:h-80 rounded-xl border border-hairline overflow-hidden bg-paper flex items-center justify-center">
+                    <!-- Injected SVG Artwork -->
+                </div>
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div>
+                        <p id="port-work-title" class="font-serif italic text-xl text-ink">Work Title</p>
+                        <p id="port-artist-loc" class="font-mono text-xs text-muted mt-0.5">Location</p>
+                    </div>
+                    <span id="port-artist-avail" class="self-start px-3 py-1 rounded-full text-xs font-medium bg-paper border border-hairline text-ink">Availability</span>
+                </div>
+                <p id="port-artist-bio" class="text-sm text-ink/90 leading-relaxed border-t border-hairline pt-4">Artist bio goes here.</p>
+                <div id="port-artist-tags" class="flex flex-wrap gap-2"></div>
+                <div class="pt-4 border-t border-hairline flex justify-end gap-3">
+                    <button onclick="closePortfolioModal()" class="px-4 py-2 rounded-full border border-hairline text-xs font-medium hover:bg-paper transition">Close Preview</button>
+                    <button id="port-connect-btn" class="bg-ink text-canvas px-5 py-2 rounded-full text-xs font-medium hover:bg-neutral-800 transition">Message Artist</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE-OVER DRAWER: CONNECT / DIRECT STUDIO MESSAGE                    -->
+    <!-- ===================================================================== -->
+    <div id="connect-drawer-backdrop" onclick="closeConnectDrawer()" class="fixed inset-0 z-40 hidden bg-ink/40 backdrop-blur-xs transition-opacity"></div>
+    <aside id="connect-drawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-md bg-canvas border-l border-hairline shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Drawer Header -->
+        <div class="px-6 py-5 border-b border-hairline bg-white flex items-center justify-between">
+            <div>
+                <span class="font-mono text-[10px] uppercase tracking-widest text-terracotta">Direct Correspondence</span>
+                <h3 id="drawer-recipient-name" class="font-serif text-2xl text-ink">Studio Inbox</h3>
+                <p id="drawer-recipient-meta" class="text-xs text-muted">Select an artist or send a studio note</p>
+            </div>
+            <button onclick="closeConnectDrawer()" class="p-2 rounded-full hover:bg-paper text-muted hover:text-ink transition" aria-label="Close drawer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Quick Conversation Prompts -->
+        <div id="drawer-prompts" class="px-6 py-3 bg-paper/70 border-b border-hairline">
+            <p class="font-mono text-[10px] uppercase tracking-wider text-muted mb-2">Quick Studio Icebreakers:</p>
+            <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="insertPrompt('Would love to exchange studio visits or schedule a 30-min online portfolio crit.')" class="text-[11px] bg-white border border-hairline hover:border-ink px-2.5 py-1 rounded-full text-ink transition">Request Studio Crit</button>
+                <button type="button" onclick="insertPrompt('Your material research aligns closely with an upcoming installation I am proposing. Open to a chat?')" class="text-[11px] bg-white border border-hairline hover:border-ink px-2.5 py-1 rounded-full text-ink transition">Propose Collaboration</button>
+                <button type="button" onclick="insertPrompt('Curious about your fabrication process—would love to compare notes on archival techniques.')" class="text-[11px] bg-white border border-hairline hover:border-ink px-2.5 py-1 rounded-full text-ink transition">Ask About Process</button>
+            </div>
+        </div>
+
+        <!-- Message Thread History -->
+        <div id="drawer-messages" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Messages populated via JS -->
+        </div>
+
+        <!-- Compose Form -->
+        <form onsubmit="handleSendMessage(event)" class="p-4 sm:p-5 bg-white border-t border-hairline space-y-3">
+            <div class="flex items-center gap-2">
+                <input type="text" id="msg-sender-name" value="Guest Practitioner" placeholder="Your Name / Studio" class="w-1/2 px-3 py-1.5 bg-canvas border border-hairline rounded-lg text-xs text-ink focus:outline-none focus:border-ink">
+                <select id="msg-intent" class="w-1/2 px-3 py-1.5 bg-canvas border border-hairline rounded-lg text-xs text-ink focus:outline-none focus:border-ink">
+                    <option value="Collaboration Inquiry">Collaboration Inquiry</option>
+                    <option value="Critique Exchange">Critique Exchange</option>
+                    <option value="Residency / Space Swap">Residency / Space Swap</option>
+                    <option value="General Studio Note">General Studio Note</option>
+                </select>
+            </div>
+            <div class="flex gap-2">
+                <textarea required id="msg-body" rows="2" placeholder="Write your note to the studio..." class="flex-1 px-3.5 py-2.5 bg-canvas border border-hairline rounded-xl text-sm text-ink focus:outline-none focus:border-ink resize-none"></textarea>
+                <button type="submit" class="bg-ink text-canvas px-4 rounded-xl text-xs font-medium hover:bg-neutral-800 transition flex items-center justify-center shrink-0">
+                    Send
+                </button>
+            </div>
+        </form>
+    </aside>
+
+    <!-- ===================================================================== -->
+    <!-- APPLICATION STATE & INTERACTIVE LOGIC                                 -->
+    <!-- ===================================================================== -->
+    <script>
+        // --- 1. Bespoke Gallery SVG Artwork Generators (Zero external image breakage) ---
+        function getPortfolioArtworkSVG(motif, seedColor = '#C85A32') {
+            const motifs = {
+                monolith: `
+                    <svg viewBox="0 0 400 260" class="w-full h-full object-cover" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="400" height="260" fill="#ECE9E1"/>
+                        <circle cx="290" cy="70" r="36" fill="${seedColor}" opacity="0.85"/>
+                        <polygon points="110,220 165,65 235,65 270,220" fill="#232220"/>
+                        <polygon points="165,65 235,65 215,220 145,220" fill="#3A3835"/>
+                        <line x1="40" y1="220" x2="360" y2="220" stroke="#181816" stroke-width="1.5"/>
+                        <rect x="75" y="155" width="48" height="65" fill="#D5CFC2" stroke="#181816" stroke-width="1"/>
+                    </svg>`,
+                algorithmic: `
+                    <svg viewBox="0 0 400 260" class="w-full h-full object-cover" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="400" height="260" fill="#181816"/>
+                        <g stroke="#FAF9F6" stroke-width="0.8" fill="none" opacity="0.75">
+                            <circle cx="200" cy="130" r="25"/>
+                            <circle cx="200" cy="130" r="45"/>
+                            <circle cx="200" cy="130" r="65"/>
+                            <circle cx="200" cy="130" r="85"/>
+                            <circle cx="200" cy="130" r="105"/>
+                            <circle cx="218" cy="130" r="65" stroke="${seedColor}" stroke-width="1.4"/>
+                            <circle cx="182" cy="130" r="65" stroke="#6E9EB8" stroke-width="1.2"/>
+                        </g>
+                        <line x1="0" y1="130" x2="400" y2="130" stroke="#FAF9F6" stroke-width="0.5" stroke-dasharray="4 4"/>
+                    </svg>`,
+                pigment: `
+                    <svg viewBox="0 0 400 260" class="w-full h-full object-cover" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="400" height="260" fill="#F4EFE6"/>
+                        <path d="M40,210 C90,90 180,60 240,140 C290,205 340,120 370,70 L370,240 L40,240 Z" fill="${seedColor}" opacity="0.82"/>
+                        <path d="M20,230 C110,160 190,190 280,120 C320,90 360,110 385,150 L385,250 L20,250 Z" fill="#4A6B5D" opacity="0.78"/>
+                        <circle cx="125" cy="82" r="24" fill="#181816"/>
+                    </svg>`,
+                acoustic: `
+                    <svg viewBox="0 0 400 260" class="w-full h-full object-cover" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="400" height="260" fill="#E8E6DF"/>
+                        <g stroke="#181816" stroke-width="1.5" fill="none">
+                            <path d="M30,130 Q80,30 130,130 T230,130 T330,130 T380,130"/>
+                            <path d="M30,130 Q80,230 130,130 T230,130 T330,130 T380,130" stroke="${seedColor}" stroke-width="2"/>
+                            <path d="M30,130 Q80,75 130,130 T230,130 T330,130 T380,130" opacity="0.5"/>
+                        </g>
+                        <rect x="65" y="40" width="270" height="180" stroke="#181816" stroke-width="0.75" fill="none"/>
+                    </svg>`
+            };
+            return motifs[motif] || motifs.monolith;
+        }
+
+        // --- 2. Pre-Populated Realistic Artist Profiles ---
+        let artists = [
+            {
+                id: 'art-1',
+                name: 'Sora Takahashi',
+                location: 'Tokyo, Japan',
+                cityTag: 'Tokyo',
+                discipline: 'Digital',
+                availability: 'Open for Collaboration',
+                tags: ['TouchDesigner', 'LiDAR Point Clouds', 'Generative Architecture'],
+                bio: 'Investigating architectural memory through real-time LiDAR scans of demolished brutalist structures in Tokyo. Looking for spatial sound composers for an upcoming AV dome commission.',
+                workTitle: 'Concrete Echoes IV (2026)',
+                motif: 'algorithmic',
+                accent: '#C85A32'
+            },
+            {
+                id: 'art-2',
+                name: 'Maren Lindholm',
+                location: 'Berlin, Germany',
+                cityTag: 'Berlin',
+                discipline: 'Spatial',
+                availability: 'Seeking Studio Critique',
+                tags: ['Unfired Clay', 'Mycelium Composites', 'Site-Specific Installation'],
+                bio: 'Building large-scale breathable architectural skins from Brandenburg clay and inoculated hemp hurd. Hosting monthly peer critique sessions at my Weißensee courtyard studio.',
+                workTitle: 'Hygroscopic Wall Study (2026)',
+                motif: 'monolith',
+                accent: '#4A6B5D'
+            },
+            {
+                id: 'art-3',
+                name: 'Mateo Valdés',
+                location: 'Mexico City, Mexico',
+                cityTag: 'Mexico City',
+                discipline: 'Visual',
+                availability: 'Open to Residency Swap',
+                tags: ['Cochineal & Mineral Pigment', 'Raw Linen', 'Botanical Fresco'],
+                bio: 'Working with pre-Hispanic earth pigments and lime wash on unprimed heavy linen. Interested in a 6-week studio swap in Central Europe during Summer 2027.',
+                workTitle: 'Oaxaca Ochre & Cochineal No. 9 (2025)',
+                motif: 'pigment',
+                accent: '#C85A32'
+            },
+            {
+                id: 'art-4',
+                name: 'Amara Okafor',
+                location: 'London, UK',
+                cityTag: 'London',
+                discipline: 'Multimedia',
+                availability: 'Open for Collaboration',
+                tags: ['16mm Film Loops', 'Hydrophone Field Recording', 'Analog Projection'],
+                bio: 'Choreographing multi-projector 16mm film installations paired with sub-aquatic recordings of the Thames estuary. Seeking kinetic sculpture collaborators.',
+                workTitle: 'Tidal Silences (Dual 16mm, 2026)',
+                motif: 'acoustic',
+                accent: '#2B4C7E'
+            },
+            {
+                id: 'art-5',
+                name: 'Joon-Ho Park',
+                location: 'Seoul, South Korea',
+                cityTag: 'Seoul',
+                discipline: 'Spatial',
+                availability: 'Commission Available',
+                tags: ['Cast Bronze', 'Hanji Paper', 'Tension Structures'],
+                bio: 'Balancing heavy patinated bronze counterweights against translucent mulberry Hanji paper membranes to explore fragility and load-bearing equilibrium.',
+                workTitle: 'Cantilevered Breath II (2026)',
+                motif: 'monolith',
+                accent: '#2B4C7E'
+            },
+            {
+                id: 'art-6',
+                name: 'Elena Rostova',
+                location: 'Berlin, Germany',
+                cityTag: 'Berlin',
+                discipline: 'Visual',
+                availability: 'Open for Collaboration',
+                tags: ['Mezzotint Engraving', 'Archival Bookbinding', 'Artist Monographs'],
+                bio: 'Master printmaker operating a traditional etching press in Kreuzberg. Looking to co-publish limited-edition artist books with poets and experimental photographers.',
+                workTitle: 'Nocturne in Copperplate (2025)',
+                motif: 'pigment',
+                accent: '#181816'
+            },
+            {
+                id: 'art-7',
+                name: 'Devon Vance',
+                location: 'New York, USA',
+                cityTag: 'New York',
+                discipline: 'Digital',
+                availability: 'Seeking Studio Critique',
+                tags: ['Custom Shaders', 'E-Ink Displays', 'Slow Computing'],
+                bio: 'Creating solar-powered E-Ink wall pieces that evolve over lunar cycles rather than 60 frames per second. Seeking critical feedback on endurance-based digital art.',
+                workTitle: 'Lunar Ephemeris #03 (2026)',
+                motif: 'algorithmic',
+                accent: '#4A6B5D'
+            },
+            {
+                id: 'art-8',
+                name: 'Klara Novak',
+                location: 'London, UK',
+                cityTag: 'London',
+                discipline: 'Multimedia',
+                availability: 'Open to Residency Swap',
+                tags: ['Modular Synthesis', 'Ceramic Resonators', 'Psychoacoustics'],
+                bio: 'Slip-casting hollow porcelain vessels tuned to specific resonant frequencies and exciting them via feedback transducers.',
+                workTitle: 'Resonant Vessel Array (2026)',
+                motif: 'acoustic',
+                accent: '#C85A32'
+            }
+        ];
+
+        // --- 3. Pre-Populated Open Calls & Collaborations ---
+        let openCalls = [
+            {
+                id: 'call-1',
+                title: 'Seeking Spatial Sound Artist for Berlin Kraftwerk Annex Show',
+                author: 'Maren Lindholm',
+                authorId: 'art-2',
+                category: 'Co-Creation',
+                location: 'Berlin, Germany',
+                timeline: 'Feb – April 2027',
+                description: 'I have secured a 180m² industrial project space for a 3-week spring exhibition featuring large unfired clay monoliths. Looking for a sound artist working with subtle acoustic resonance or field recordings to co-author the sonic environment.',
+                responses: 4,
+                postedAt: '2 days ago'
+            },
+            {
+                id: 'call-2',
+                title: 'Two-Person Exhibition Proposal: Material Memory (Tokyo / Berlin)',
+                author: 'Sora Takahashi',
+                authorId: 'art-1',
+                category: 'Exhibition / Space',
+                location: 'Tokyo & Berlin',
+                timeline: 'Autumn 2027',
+                description: 'Looking for a tactile sculptor or textile artist to pair with my real-time LiDAR architectural projections. Goal is to co-write a joint grant application for a two-city exchange exhibition.',
+                responses: 7,
+                postedAt: '4 days ago'
+            },
+            {
+                id: 'call-3',
+                title: 'Shader / GLSL Optimization Swap for Copperplate Print Edition',
+                author: 'Elena Rostova',
+                authorId: 'art-6',
+                category: 'Technical Skill Swap',
+                location: 'Berlin / Remote',
+                timeline: 'December 2026',
+                description: 'I am translating algorithmic interference patterns onto copper etching plates and need help refining a custom WebGL export script. In exchange, I will pull a custom edition of intaglio prints for you in my Kreuzberg printshop.',
+                responses: 2,
+                postedAt: '5 days ago'
+            },
+            {
+                id: 'call-4',
+                title: 'Bi-Weekly Peer Critique Group: Slow & Post-Digital Practices',
+                author: 'Devon Vance',
+                authorId: 'art-7',
+                category: 'Critique Circle',
+                location: 'Online (CET / EST Friendly)',
+                timeline: 'Ongoing Monthly',
+                description: 'Forming a committed group of 5 artists working outside fast commercial cycles (e-ink, durational performance, analog film, bio-materials) for deep, structured 90-minute work-in-progress crits.',
+                responses: 9,
+                postedAt: '1 week ago'
+            },
+            {
+                id: 'call-5',
+                title: 'CDMX Courtyard Studio & Kiln Swap for European Summer',
+                author: 'Mateo Valdés',
+                authorId: 'art-3',
+                category: 'Exhibition / Space',
+                location: 'Roma Norte, Mexico City',
+                timeline: 'June – July 2027',
+                description: 'Offering my sunlit 90m² studio with natural pigment grinding station and small test kiln in Mexico City in exchange for a workspace in Berlin, Vienna, or Zurich.',
+                responses: 3,
+                postedAt: '1 week ago'
+            }
+        ];
+
+        // --- 4. Direct Messages Store (In-memory session correspondence) ---
+        let conversations = {
+            'art-1': [
+                { sender: 'Sora Takahashi', role: 'artist', intent: 'Studio Note', text: 'Welcome to my studio thread. Feel free to reach out regarding AV commissions or Tokyo residency tips.', time: '10:15 AM' }
+            ],
+            'art-2': [
+                { sender: 'Maren Lindholm', role: 'artist', intent: 'Studio Note', text: 'Always happy to connect with fellow spatial practitioners in Berlin or abroad.', time: 'Yesterday' }
+            ]
+        };
+
+        // --- 5. Filter & UI State ---
+        let activeView = 'directory';
+        let activeDiscipline = 'All';
+        let activeCallCategory = 'All';
+        let activeRecipientId = null;
+
+        // --- 6. Render Functions ---
+        function getAvailabilityBadgeStyle(status) {
+            switch (status) {
+                case 'Open for Collaboration':
+                    return 'bg-sage/10 text-sage border-sage/30';
+                case 'Seeking Studio Critique':
+                    return 'bg-cobalt/10 text-cobalt border-cobalt/30';
+                case 'Open to Residency Swap':
+                    return 'bg-terracotta/10 text-terracotta border-terracotta/30';
+                default:
+                    return 'bg-paper text-ink border-hairline';
+            }
+        }
+
+        function renderArtists() {
+            const grid = document.getElementById('artists-grid');
+            const emptyState = document.getElementById('empty-directory');
+            const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+            const availFilter = document.getElementById('availability-filter').value;
+            const locFilter = document.getElementById('location-filter').value;
+
+            const filtered = artists.filter(artist => {
+                const matchesDisc = activeDiscipline === 'All' || artist.discipline === activeDiscipline;
+                const matchesAvail = availFilter === 'all' || artist.availability === availFilter;
+                const matchesLoc = locFilter === 'all' || artist.location.toLowerCase().includes(locFilter.toLowerCase());
+                const matchesSearch = !searchQuery ||
+                    artist.name.toLowerCase().includes(searchQuery) ||
+                    artist.location.toLowerCase().includes(searchQuery) ||
+                    artist.bio.toLowerCase().includes(searchQuery) ||
+                    artist.tags.some(t => t.toLowerCase().includes(searchQuery));
+
+                return matchesDisc && matchesAvail && matchesLoc && matchesSearch;
+            });
+
+            // Update count badges and summary text
+            document.getElementById('artist-count-badge').textContent = `(${artists.length})`;
+            const isFiltered = activeDiscipline !== 'All' || availFilter !== 'all' || locFilter !== 'all' || searchQuery !== '';
+            document.getElementById('results-summary').textContent = isFiltered
+                ? `Showing ${filtered.length} of ${artists.length} practitioners`
+                : `Showing all ${artists.length} resident artists`;
+            document.getElementById('reset-filters-btn').classList.toggle('hidden', !isFiltered);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(artist => `
+                <article class="group bg-white border border-hairline rounded-2xl overflow-hidden flex flex-col justify-between hover:border-ink/40 hover:shadow-md transition-all duration-300">
+                    <div>
+                        <!-- Portfolio Preview Thumbnail (Clickable for Lightbox) -->
+                        <div onclick="openPortfolioModal('${artist.id}')" class="relative h-52 bg-paper border-b border-hairline overflow-hidden cursor-pointer">
+                            <div class="w-full h-full transform group-hover:scale-[1.03] transition-transform duration-500">
+                                ${getPortfolioArtworkSVG(artist.motif, artist.accent)}
+                            </div>
+                            <div class="absolute top-3 left-3">
+                                <span class="font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full bg-canvas/90 backdrop-blur-xs text-ink border border-hairline">
+                                    ${artist.discipline}
+                                </span>
+                            </div>
+                            <div class="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="text-[11px] font-medium px-3 py-1 rounded-full bg-ink text-canvas shadow-sm">
+                                    Inspect Work ↗
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-5 sm:p-6">
+                            <div class="flex items-start justify-between gap-2 mb-1">
+                                <h3 class="font-serif text-2xl font-medium text-ink leading-tight">${artist.name}</h3>
+                            </div>
+                            <p class="font-mono text-xs text-muted mb-3 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                                ${artist.location}
+                            </p>
+
+                            <!-- Availability Status Pill -->
+                            <div class="mb-4">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border ${getAvailabilityBadgeStyle(artist.availability)}">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                                    ${artist.availability}
+                                </span>
+                            </div>
+
+                            <!-- Bio Excerpt -->
+                            <p class="text-sm text-ink/80 leading-relaxed line-clamp-3 mb-4">
+                                ${artist.bio}
+                            </p>
+
+                            <!-- Medium Tags -->
+                            <div class="flex flex-wrap gap-1.5">
+                                ${artist.tags.map(tag => `
+                                    <span class="text-[11px] px-2.5 py-0.5 rounded-md bg-paper text-muted border border-hairline/80">${tag}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Action Footer -->
+                    <div class="px-5 sm:px-6 py-4 bg-paper/40 border-t border-hairline flex items-center justify-between gap-3">
+                        <button onclick="openPortfolioModal('${artist.id}')" class="text-xs font-medium text-muted hover:text-ink transition">
+                            Work Preview
+                        </button>
+                        <button onclick="openConnectDrawer('${artist.id}')" class="bg-ink text-canvas text-xs font-medium px-4 py-2 rounded-full hover:bg-neutral-800 transition flex items-center gap-1.5">
+                            <span>Connect</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+                        </button>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function renderOpenCalls() {
+            const list = document.getElementById('calls-list');
+            document.getElementById('calls-count-badge').textContent = `(${openCalls.length})`;
+
+            const filtered = activeCallCategory === 'All'
+                ? openCalls
+                : openCalls.filter(c => c.category === activeCallCategory);
+
+            list.innerHTML = filtered.map(call => `
+                <article class="bg-white border border-hairline rounded-2xl p-6 flex flex-col justify-between hover:border-ink/40 transition">
+                    <div>
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <span class="font-mono text-[11px] uppercase tracking-wider px-3 py-1 rounded-full bg-paper border border-hairline text-ink">
+                                ${call.category}
+                            </span>
+                            <span class="font-mono text-xs text-muted">${call.postedAt}</span>
+                        </div>
+                        <h3 class="font-serif text-2xl text-ink leading-snug mb-2">${call.title}</h3>
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-mono text-muted mb-4">
+                            <span>Initiated by <strong class="text-ink font-medium">${call.author}</strong></span>
+                            <span>• ${call.location}</span>
+                            <span>• ${call.timeline}</span>
+                        </div>
+                        <p class="text-sm text-ink/85 leading-relaxed mb-6">${call.description}</p>
+                    </div>
+
+                    <div class="pt-4 border-t border-hairline flex items-center justify-between gap-4">
+                        <span class="font-mono text-xs text-muted">
+                            <strong class="text-ink">${call.responses}</strong> studio responses
+                        </span>
+                        <button onclick="respondToCall('${call.id}')" class="bg-ink text-canvas text-xs font-medium px-4 py-2 rounded-full hover:bg-neutral-800 transition">
+                            Respond to Proposal →
+                        </button>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        // --- 7. Filtering & Navigation Controllers ---
+        function switchView(viewName) {
+            activeView = viewName;
+            const dirView = document.getElementById('view-directory');
+            const callsView = document.getElementById('view-calls');
+            const navDir = document.getElementById('nav-directory');
+            const navCalls = document.getElementById('nav-calls');
+
+            if (viewName === 'directory') {
+                dirView.classList.remove('hidden');
+                callsView.classList.add('hidden');
+                navDir.className = 'px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all bg-ink text-canvas shadow-sm';
+                navCalls.className = 'px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium text-muted hover:text-ink transition-all';
+            } else {
+                dirView.classList.add('hidden');
+                callsView.classList.remove('hidden');
+                navCalls.className = 'px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all bg-ink text-canvas shadow-sm';
+                navDir.className = 'px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium text-muted hover:text-ink transition-all';
+            }
+        }
+
+        function setDisciplineFilter(disc) {
+            activeDiscipline = disc;
+            document.querySelectorAll('.disc-btn').forEach(btn => {
+                if (btn.dataset.disc === disc) {
+                    btn.className = 'disc-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-ink text-canvas transition shrink-0';
+                } else {
+                    btn.className = 'disc-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-paper text-ink hover:bg-hairline/60 transition shrink-0';
+                }
+            });
+            renderArtists();
+        }
+
+        function filterArtists() {
+            renderArtists();
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('availability-filter').value = 'all';
+            document.getElementById('location-filter').value = 'all';
+            setDisciplineFilter('All');
+        }
+
+        function filterCalls(category) {
+            activeCallCategory = category;
+            document.querySelectorAll('.call-cat-btn').forEach(btn => {
+                if (btn.dataset.callCat === category) {
+                    btn.className = 'call-cat-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-ink text-canvas transition shrink-0';
+                } else {
+                    btn.className = 'call-cat-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-paper text-ink hover:bg-hairline/60 transition shrink-0';
+                }
+            });
+            renderOpenCalls();
+        }
+
+        // --- 8. Modal Controllers (Create Profile, Open Call, Portfolio Preview) ---
+        function openProfileModal() {
+            const modal = document.getElementById('profile-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeProfileModal() {
+            const modal = document.getElementById('profile-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function handleCreateProfile(e) {
+            e.preventDefault();
+            const name = document.getElementById('prof-name').value.trim();
+            const location = document.getElementById('prof-location').value.trim();
+            const discipline = document.getElementById('prof-discipline').value;
+            const availability = document.getElementById('prof-availability').value;
+            const tagsRaw = document.getElementById('prof-tags').value;
+            const bio = document.getElementById('prof-bio').value.trim();
+            const workTitle = document.getElementById('prof-work-title').value.trim();
+            const motif = document.getElementById('prof-motif').value;
+
+            const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+            const newArtist = {
+                id: 'art-' + Date.now(),
+                name,
+                location,
+                cityTag: location.split(',')[0].trim(),
+                discipline,
+                availability,
+                tags: tags.length ? tags : ['Mixed Media'],
+                bio,
+                workTitle,
+                motif,
+                accent: '#C85A32'
+            };
+
+            artists.unshift(newArtist);
+            document.getElementById('create-profile-form').reset();
+            closeProfileModal();
+            switchView('directory');
+            resetFilters();
+            showToast(`Profile for ${name} published to the Atelier Index.`);
+        }
+
+        function openCallModal() {
+            const modal = document.getElementById('call-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCallModal() {
+            const modal = document.getElementById('call-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function handleCreateCall(e) {
+            e.preventDefault();
+            const title = document.getElementById('call-title').value.trim();
+            const author = document.getElementById('call-author').value.trim();
+            const category = document.getElementById('call-category').value;
+            const location = document.getElementById('call-location').value.trim();
+            const timeline = document.getElementById('call-timeline').value.trim();
+            const description = document.getElementById('call-desc').value.trim();
+
+            const newCall = {
+                id: 'call-' + Date.now(),
+                title,
+                author,
+                authorId: 'custom-' + Date.now(),
+                category,
+                location,
+                timeline,
+                description,
+                responses: 1,
+                postedAt: 'Just now'
+            };
+
+            openCalls.unshift(newCall);
+            document.getElementById('create-call-form').reset();
+            closeCallModal();
+            renderOpenCalls();
+            showToast('Your open call has been posted to the board.');
+        }
+
+        function openPortfolioModal(artistId) {
+            const artist = artists.find(a => a.id === artistId);
+            if (!artist) return;
+
+            document.getElementById('port-artist-disc').textContent = `${artist.discipline} Practice`;
+            document.getElementById('port-artist-name').textContent = artist.name;
+            document.getElementById('port-artwork-container').innerHTML = getPortfolioArtworkSVG(artist.motif, artist.accent);
+            document.getElementById('port-work-title').textContent = artist.workTitle;
+            document.getElementById('port-artist-loc').textContent = artist.location;
+            document.getElementById('port-artist-avail').textContent = artist.availability;
+            document.getElementById('port-artist-bio').textContent = artist.bio;
+            document.getElementById('port-artist-tags').innerHTML = artist.tags.map(t =>
+                `<span class="text-xs px-3 py-1 rounded-full bg-paper border border-hairline text-ink">${t}</span>`
+            ).join('');
+
+            const connectBtn = document.getElementById('port-connect-btn');
+            connectBtn.onclick = () => {
+                closePortfolioModal();
+                openConnectDrawer(artist.id);
+            };
+
+            const modal = document.getElementById('portfolio-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closePortfolioModal() {
+            const modal = document.getElementById('portfolio-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // --- 9. Direct Messaging Drawer Logic ---
+        function openConnectDrawer(artistId, prefillSubject = '') {
+            const artist = artists.find(a => a.id === artistId);
+            activeRecipientId = artistId;
+
+            if (artist) {
+                document.getElementById('drawer-recipient-name').textContent = artist.name;
+                document.getElementById('drawer-recipient-meta').textContent = `${artist.location} • ${artist.availability}`;
+            } else {
+                document.getElementById('drawer-recipient-name').textContent = 'Project Lead';
+                document.getElementById('drawer-recipient-meta').textContent = 'Open Call Correspondence';
+            }
+
+            if (prefillSubject) {
+                document.getElementById('msg-body').value = prefillSubject;
+            }
+
+            renderConversation(artistId);
+
+            document.getElementById('connect-drawer-backdrop').classList.remove('hidden');
+            document.getElementById('connect-drawer').classList.remove('translate-x-full');
+        }
+
+        function openMessagesInbox() {
+            // Open with the first active artist conversation
+            const firstId = Object.keys(conversations)[0] || artists[0].id;
+            openConnectDrawer(firstId);
+        }
+
+        function closeConnectDrawer() {
+            document.getElementById('connect-drawer-backdrop').classList.add('hidden');
+            document.getElementById('connect-drawer').classList.add('translate-x-full');
+        }
+
+        function insertPrompt(text) {
+            const textarea = document.getElementById('msg-body');
+            textarea.value = text;
+            textarea.focus();
+        }
+
+        function renderConversation(recipientId) {
+            const container = document.getElementById('drawer-messages');
+            const thread = conversations[recipientId] || [];
+
+            if (thread.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 px-4 border border-dashed border-hairline rounded-2xl bg-white/60">
+                        <p class="font-serif text-xl text-ink mb-1">Start a Studio Dialogue</p>
+                        <p class="text-xs text-muted leading-relaxed">Introduce your practice, share a link to your work, or propose a specific timeframe to connect.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = thread.map(msg => {
+                const isSelf = msg.role === 'self';
+                return `
+                    <div class="flex flex-col ${isSelf ? 'items-end' : 'items-start'}">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-mono text-[10px] text-muted">${msg.sender} • ${msg.time}</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-paper border border-hairline text-ink">${msg.intent}</span>
+                        </div>
+                        <div class="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isSelf ? 'bg-ink text-canvas rounded-br-xs' : 'bg-white border border-hairline text-ink rounded-bl-xs'}">
+                            ${msg.text}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function handleSendMessage(e) {
+            e.preventDefault();
+            if (!activeRecipientId) return;
+
+            const senderName = document.getElementById('msg-sender-name').value.trim() || 'Guest Practitioner';
+            const intent = document.getElementById('msg-intent').value;
+            const body = document.getElementById('msg-body').value.trim();
+            if (!body) return;
+
+            if (!conversations[activeRecipientId]) {
+                conversations[activeRecipientId] = [];
+            }
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            conversations[activeRecipientId].push({
+                sender: senderName,
+                role: 'self',
+                intent,
+                text: body,
+                time: timeStr
+            });
+
+            document.getElementById('msg-body').value = '';
+            document.getElementById('unread-dot').classList.remove('hidden');
+            renderConversation(activeRecipientId);
+            showToast('Direct studio message dispatched.');
+        }
+
+        function respondToCall(callId) {
+            const call = openCalls.find(c => c.id === callId);
+            if (!call) return;
+
+            call.responses += 1;
+            renderOpenCalls();
+
+            const targetArtist = artists.find(a => a.name === call.author);
+            const targetId = targetArtist ? targetArtist.id : call.authorId;
+            if (!targetArtist) {
+                // Ensure conversation metadata works for custom call authors
+                conversations[targetId] = conversations[targetId] || [];
+            }
+
+            openConnectDrawer(targetId, `Re: "${call.title}" — I'd love to discuss contributing to this project.`);
+            if (!targetArtist) {
+                document.getElementById('drawer-recipient-name').textContent = call.author;
+                document.getElementById('drawer-recipient-meta').textContent = `${call.location} • ${call.category}`;
+            }
+        }
+
+        // --- 10. Non-Intrusive Toast Notification System ---
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'pointer-events-auto bg-ink text-canvas px-4 py-3 rounded-xl shadow-lg border border-neutral-700 text-xs font-medium flex items-center gap-2.5 transition-all duration-300';
+            toast.innerHTML = `
+                <span class="w-2 h-2 rounded-full bg-terracotta shrink-0"></span>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(8px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3400);
+        }
+
+        // --- 11. Initialize Application on Load ---
+        window.addEventListener('DOMContentLoaded', () => {
+            renderArtists();
+            renderOpenCalls();
+        });
+    </script>
+</body>
+</html>
